@@ -1,7 +1,9 @@
 """Base settings to build other settings files upon."""
 
+# Library for file paths and environment variables
 import environ
 
+# These variables tell django what is the global directory and where are the apps
 ROOT_DIR = environ.Path(__file__) - 3
 APPS_DIR = ROOT_DIR.path('cride')
 
@@ -25,9 +27,11 @@ DATABASES = {
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
 # URLs
+# This tells django where the main urls file is
 ROOT_URLCONF = 'config.urls'
 
 # WSGI
+# This tells django where the wsgi file is 
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Apps
@@ -134,7 +138,7 @@ EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.s
 # Admin
 ADMIN_URL = 'admin/'
 ADMINS = [
-    ("""Pablo Trinidad""", 'pablotrinidad@ciencias.unam.mx'),
+    ("""Julian Archila""", 'julialejo2018@gmail.com@ciencias.unam.mx'),
 ]
 MANAGERS = ADMINS
 
