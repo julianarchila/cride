@@ -10,6 +10,9 @@ django==3.0.2
 # Environment
 django-environ==0.4.5
 
+# Django rest framework
+djangorestframework==3.12.4
+
 # Passwords security
 argon2-cffi==20.1.0
 
