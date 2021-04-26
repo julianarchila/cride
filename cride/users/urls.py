@@ -9,5 +9,5 @@ from .views import UserLoginAPIView
 
 
 urlpatterns = [
-    path("users/login", UserLoginAPIView.as_view())
+    path("users/login/", UserLoginAPIView.as_view())
 ] 
