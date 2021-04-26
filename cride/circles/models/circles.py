@@ -31,7 +31,7 @@ class Circle(CRideModel):
     )
     
     is_public = models.BooleanField(
-        default=False,
+        default=True,
         help_text="Public circles are listed in the main page so everyone know about their existence."
 # def import_data(file):
 #     with open(str(file)) as csv_file:
