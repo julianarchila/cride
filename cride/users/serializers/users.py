@@ -134,3 +134,33 @@ class UserLoginSerializer(serializers.Serializer):
         return self.context["user"], token.key
 
 
+class AccountVerificationSerializer(serializers.Serializer):
+    """ Account verfication serializer. """
+    token = serializers.CharField()
+
+    def validate_token(self, token):
+        """ Validate token. """
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise serializers.ValidationError("Verification link has expired.")
+        except jwt.PyJWTError:
+            raise serializers.ValidationError("Invalid token.")
+
+        if payload["type"] != "email_confirmation":
+            raise serializers.ValidationError("Invalid token.")
+
+        self.context["payload"] = payload 
+        return token
+
+        
+    def save(self):
+        payload = self.context["payload"]
+        user = User.objects.get(username=payload["user"])
+        user.is_verified = True
+        user.save()
+
+
+        
+        
