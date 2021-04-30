@@ -8,13 +8,11 @@ from cride.utils.models import CRideModel
 
 class Circle(CRideModel):
     """Circle model.
-
     A circle is a private group where rides are offered and taken
     by its members. To join a circles users must recive a unique
     invitation code from a existing circle member.
     """
-    pass
-    "name, slug name  about, picture, rides_taken, rides_offered"
+    
     name = models.CharField("circle name", max_length=140)
     slug_name = models.CharField(unique=True, max_length=40)
 
@@ -37,25 +35,9 @@ class Circle(CRideModel):
     )
     
     is_public = models.BooleanField(
+        "public",
         default=True,
-        help_text="Public circles are listed in the main page so everyone know about their existence."
-# def import_data(file):
-#     with open(str(file)) as csv_file:
-#         csv_reader = csv.reader(csv_file, delimiter=',')
-#         line_counter = 0
-#         for row in csv_reader:
-#             if line_counter != 0:
-#                 c = Circle(
-#                     name=row[0],
-#                     slug_name=row[1],
-#                     rides_offerted=int(row[2]),
-#                     rides_taken=int(row[3]),
-#                     is_limited=(False if int(row[4]) == 0 else True),
-#                     members_limit=int(row[4])
-#                 )
-#                 c.save()
-#             line_counter += 1
-# import_data('circles.csv')
+        help_text="Public circles are listed in the main page so everyone knows about is existence."
     )
     
     is_limited = models.BooleanField(
