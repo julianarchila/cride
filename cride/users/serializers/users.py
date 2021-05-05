@@ -17,17 +17,22 @@ from rest_framework.validators import UniqueValidator
 # Models
 from cride.users.models import User, Profile
 
+# Serializers
+from cride.users.serializers.profiles import ProfileModelSerializer
+
 # Utilities
 from datetime import timedelta
 import jwt 
 
 
 class UserModelSerializer(serializers.ModelSerializer):
+    profile = ProfileModelSerializer(read_only=True)
     class Meta:
         model = User
         fields = (
             'username',
             'first_name',
+            'profile', 
             'last_name',
             'email', 
             'phone_number'
