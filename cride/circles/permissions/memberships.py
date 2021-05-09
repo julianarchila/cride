@@ -25,3 +25,9 @@ class IsActiveCircleMember(permissions.BasePermission):
             return False
 
         return True
+
+class IsSelfMember(permissions.BasePermission):
+    """Only allow user to access its own information"""
+
+    def has_permission(self, request, view):
+        return view.get_object().user == request.user
