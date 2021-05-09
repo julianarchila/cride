@@ -4,9 +4,13 @@
 from django.contrib import admin
 
 # Models
-from cride.circles.models import Circle, Membership
+from cride.circles.models import (
+    Circle, Membership,
+    Invitation
+)
 
 admin.site.register(Membership)
+admin.site.register(Invitation)
 @admin.register(Circle)
 class CircleAdmin(admin.ModelAdmin):
     list_display = (
