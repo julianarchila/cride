@@ -4,6 +4,9 @@
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 
+# Filters
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 # Custome permissions
 from cride.circles.permissions.circles import IsCircleAdmin
 
@@ -22,8 +25,16 @@ class CircleViewSet(
 
     """ Circle view set. """
     serializer_class = CircleModelSerializer
-    permission_classes = (IsAuthenticated,)
     lookup_field = "slug_name"
+
+    # Filters
+    filter_backends = (SearchFilter, OrderingFilter, DjangoFilterBackend)
+    search_fields = ["name", "slug_name", "about"]
+    ordering_fields = ["name", "rides_taken", "rides_offered"]
+    ordering = ["-members__count", "-rides_offered", "-rides_taken"]
+    filter_fields = ["verified", "is_limited"]
+
+
 
     def get_queryset(self):
         queryset = Circle.objects.all()
