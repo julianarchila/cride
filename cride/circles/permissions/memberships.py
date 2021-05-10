@@ -9,9 +9,10 @@ from cride.circles.models import Membership
 class IsActiveCircleMember(permissions.BasePermission):
     """Allow access only to circle active members.
 
-    Exptect that the views implementing this permision
+    Expects that the views implementing this permission
     have a 'circle' attribute assigned.
     """
+    message = "You are not a active circle member"
 
     def has_permission(self, request, view):
         """Verify user is an active member of the circle. """

@@ -1,0 +1,77 @@
+""" Rides serializers. """
+
+# Django REST Framework
+from rest_framework import serializers
+
+# Models
+from cride.rides.models import Ride
+from cride.circles.models import Membership
+
+# Utilities
+from datetime import timedelta
+from django.utils import timezone
+
+
+class CreateRideSerializer(serializers.ModelSerializer):
+
+    offered_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    available_seats = serializers.IntegerField(min_value=1, max_value=15)
+    
+    class Meta:
+        """ Meta class. """
+        model = Ride
+        exclude = ("offered_in", "passengers", "rating", "is_active")
+
+    def validate_departure_date(self, value):
+        """ Validate a rides is not staring in the past. """
+        min_date = timezone.now() + timedelta(minutes=10)
+        if value < min_date:
+            raise serializers.ValidationError("Departure time must be at least pass a 15 minute window.")
+        return value
+
+    def validate(self, data):
+        """Validate.
+        Verify that the person who offeres the ride is a member of the circle
+        and also the person who is making the request.
+        """
+        if self.context["request"].user != data["offered_by"]:
+            raise serializers.ValidationError("Rides offered on behalf of others are not allow")
+
+        user = data["offered_by"]
+        circle = self.context["circle"]
+        try:
+            membership = Membership.objects.get(user=user, circle=circle, is_active=True)
+        except Membership.DoesNotExist:
+            raise serializers.ValidationError("User is not a active member of the circle.")
+
+        if data["arrival_date"] <= data["departure_date"]:
+            raise serializers.ValidationError("Arrival date must not be before departure date.")
+
+        self.context["membership"] = membership
+        return data
+
+
+    def create(self, validated_data):
+        """Create ride and update circle,profile and membership stats. """
+        circle = self.context["circle"]
+        ride = Ride.objects.create(**validated_data, offered_in=circle)
+
+        # Circle
+        circle.rides_offered += 1
+        circle.save()
+
+        # Membership
+        membership = self.context["membership"]
+        membership.rides_offered += 1
+        membership.save()
+
+        # Profile
+        profile = validated_data["offered_by"].profile
+        profile.rides_offered += 1
+        profile.save()
+
+        return ride
+
+        
+
+    
