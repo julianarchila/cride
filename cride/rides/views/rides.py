@@ -2,12 +2,15 @@
 
 # Django REST Framework
 from rest_framework import viewsets, mixins
+from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
+from rest_framework.decorators import action
 
 # Serializers
 from cride.rides.serializers import (
     CreateRideSerializer,
-    RideModelSerializer
+    RideModelSerializer,
+    JoinRideSerializer
 )
 
 # Filters
@@ -16,8 +19,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 # Permissions
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 from cride.circles.permissions.memberships import IsActiveCircleMember
-from cride.rides.permissions.rides import IsRideOwner
+from cride.rides.permissions.rides import IsRideOwner,PassangerIsNotRideOwner 
 
 # Models
 from cride.circles.models import Circle
@@ -53,6 +57,9 @@ class RideViewSet(
         if self.action in ["update", "partial_update"]:
             permissions.append(IsRideOwner)
 
+        if self.action == "join":
+            permissions.append(PassangerIsNotRideOwner)
+
         return [p() for p in permissions]
 
 
@@ -74,3 +81,17 @@ class RideViewSet(
             is_active=True,
             available_seats__gte=1
         )
+    @action(detail=True, methods=["POST"])
+    def join(self, request, *args, **kwargs):
+        """ Add requesting user to ride. """
+        ride = self.get_object()
+        serializer = JoinRideSerializer(
+            ride,
+            data={"passenger": request.user.id},
+            context={"ride": ride, "circle": self.circle},
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        ride = serializer.save()
+        data = RideModelSerializer(ride).data
+        return Response(data, status=status.HTTP_200_OK)
