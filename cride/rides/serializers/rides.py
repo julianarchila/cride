@@ -7,6 +7,9 @@ from rest_framework import serializers
 from cride.rides.models import Ride
 from cride.circles.models import Membership
 
+# Serializers
+from cride.users.serializers.users import UserModelSerializer
+
 # Utilities
 from datetime import timedelta
 from django.utils import timezone
@@ -14,6 +17,10 @@ from django.utils import timezone
 
 class RideModelSerializer(serializers.ModelSerializer):
     """ Ride model serializer."""
+    offered_by = UserModelSerializer(read_only=True)
+    offered_in = serializers.StringRelatedField()
+
+    passengers = UserModelSerializer(read_only=True, many=True)
     class Meta:
         """ Meta class. """
         model = Ride
@@ -23,6 +30,12 @@ class RideModelSerializer(serializers.ModelSerializer):
             "offered_in",
             "rating"
         )
+
+    def update(self, instance, validated_data):
+        if timezone.now() >= instance.departure_date:
+            raise serializers.ValidationError("On going rides can not be modified.")
+
+        return super(RideModelSerializer, self).update(instance, validated_data)
 
 class CreateRideSerializer(serializers.ModelSerializer):
 
