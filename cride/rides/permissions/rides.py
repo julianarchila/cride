@@ -12,7 +12,7 @@ class IsRideOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.offered_by == request.user
 
-class PassangerIsNotRideOwner(permissions.BasePermission):
+class IsNotRideOwner(permissions.BasePermission):
     """ Ensure ride if offered by requesting user. """
     message = "Ride owner can't be a passenger."
     def has_object_permission(self, request, view, obj):

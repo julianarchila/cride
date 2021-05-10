@@ -98,6 +98,17 @@ class CreateRideSerializer(serializers.ModelSerializer):
 
         return ride
 
+class FinishRideSerializer(serializers.ModelSerializer):
+    """ Finish ride serializer. """
+    current_time = serializers.DateTimeField()
+    class Meta:
+        model = Ride
+        fields = ("is_active", "current_time")
+
+    def validate_current_time(self, data):
+        ride = self.context["view"].get_object()
+        if data <= ride.departure_date:
+            raise serializers.ValidationError("Ride has not started yet.")
         
 
 class JoinRideSerializer(serializers.ModelSerializer):
