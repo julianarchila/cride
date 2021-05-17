@@ -6,6 +6,7 @@ from rest_framework import permissions
 # Models
 from cride.circles.models import Membership
 
+
 class IsActiveCircleMember(permissions.BasePermission):
     """Allow access only to circle active members.
 
@@ -26,6 +27,7 @@ class IsActiveCircleMember(permissions.BasePermission):
             return False
 
         return True
+
 
 class IsSelfMember(permissions.BasePermission):
     """Only allow user to access its own information"""

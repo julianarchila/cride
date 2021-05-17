@@ -22,6 +22,7 @@ class RideModelSerializer(serializers.ModelSerializer):
     offered_in = serializers.StringRelatedField()
 
     passengers = UserModelSerializer(read_only=True, many=True)
+
     class Meta:
         """ Meta class. """
         model = Ride
@@ -38,11 +39,12 @@ class RideModelSerializer(serializers.ModelSerializer):
 
         return super(RideModelSerializer, self).update(instance, validated_data)
 
+
 class CreateRideSerializer(serializers.ModelSerializer):
 
     offered_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
     available_seats = serializers.IntegerField(min_value=1, max_value=15)
-    
+
     class Meta:
         """ Meta class. """
         model = Ride
@@ -76,7 +78,6 @@ class CreateRideSerializer(serializers.ModelSerializer):
         self.context["membership"] = membership
         return data
 
-
     def create(self, validated_data):
         """Create ride and update circle,profile and membership stats. """
         circle = self.context["circle"]
@@ -98,9 +99,11 @@ class CreateRideSerializer(serializers.ModelSerializer):
 
         return ride
 
+
 class FinishRideSerializer(serializers.ModelSerializer):
     """ Finish ride serializer. """
     current_time = serializers.DateTimeField()
+
     class Meta:
         model = Ride
         fields = ("is_active", "current_time")
@@ -109,11 +112,12 @@ class FinishRideSerializer(serializers.ModelSerializer):
         ride = self.context["view"].get_object()
         if data <= ride.departure_date:
             raise serializers.ValidationError("Ride has not started yet.")
-        
+
 
 class JoinRideSerializer(serializers.ModelSerializer):
     """ Join ride serializer. """
     passenger = serializers.IntegerField()
+
     class Meta:
         model = Ride
         fields = ("passenger",)
@@ -132,8 +136,7 @@ class JoinRideSerializer(serializers.ModelSerializer):
         except Membership.DoesNotExist:
             raise serializers.ValidationError("User is not a active member of the circle.")
 
-
-        self.context["member"] = membership 
+        self.context["member"] = membership
         self.context["user"] = user
         return data
 
@@ -166,7 +169,7 @@ class JoinRideSerializer(serializers.ModelSerializer):
         ride.available_seats -= 1
         ride.save()
 
-        # Profile stats 
+        # Profile stats
         profile = user.profile
         profile.rides_taken += 1
         profile.save()

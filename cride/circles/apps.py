@@ -3,6 +3,7 @@
 # Django
 from django.apps import AppConfig
 
+
 class CirclesAppConfig(AppConfig):
     """ Users app configuration """
 

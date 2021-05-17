@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 # Permisions
 from rest_framework.permissions import (
-    AllowAny, 
+    AllowAny,
     IsAuthenticated
 )
 from cride.users.permissions import IsAccountOwner
@@ -31,9 +31,9 @@ from cride.circles.serializers.circles import CircleModelSerializer
 
 
 class UserViewSet(
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    viewsets.GenericViewSet):
+        mixins.RetrieveModelMixin,
+        mixins.UpdateModelMixin,
+        viewsets.GenericViewSet):
     """ User view set.
     Handle signup, login, account verification
     """
@@ -46,8 +46,8 @@ class UserViewSet(
         if self.action in ["signup", "login", "verify"]:
             permissions = [AllowAny]
         elif self.action in ["retrieve", "update", "partial_update"]:
-            permissions = [IsAuthenticated,IsAccountOwner]
-        else: 
+            permissions = [IsAuthenticated, IsAccountOwner]
+        else:
             permissions = [IsAuthenticated]
 
         return [p() for p in permissions]
@@ -64,7 +64,7 @@ class UserViewSet(
             "user": UserModelSerializer(user).data,
         }
         return Response(data=data, status=status.HTTP_201_CREATED)
-    
+
     @action(detail=False, methods=["POST"])
     def login(self, request):
         """Login action """
@@ -91,7 +91,7 @@ class UserViewSet(
         }
         return Response(data=data, status=status.HTTP_200_OK)
 
-    @action(detail=True , methods=["PUT", "PATCH"])
+    @action(detail=True, methods=["PUT", "PATCH"])
     def profile(self, request, *args, **kwargs):
         user = self.get_object()
         profile = user.profile
@@ -105,7 +105,6 @@ class UserViewSet(
         serializer.save()
         data = UserModelSerializer(user).data
         return Response(data=data)
-    
 
     def retrieve(self, request, *args, **kwargs):
         """ Add extra data to the response """
@@ -120,7 +119,3 @@ class UserViewSet(
         }
         response.data = data
         return response
-
-
-    
-

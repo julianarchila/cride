@@ -1,6 +1,7 @@
 """Django models utilities """
 from django.db import models
 
+
 class CRideModel(models.Model):
     """ Share Ride base model. 
     CRideModel acts as an abstract class from which every 

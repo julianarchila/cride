@@ -8,8 +8,8 @@ from rest_framework.generics import get_object_or_404
 
 # Models
 from cride.circles.models import (
-    Circle, 
-    Membership, 
+    Circle,
+    Membership,
     Invitation
 )
 
@@ -26,16 +26,18 @@ from cride.circles.serializers.memberships import (
     MembershipCreateSerializer
 )
 
+
 class MembershipViewSet(mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
                         mixins.CreateModelMixin,
                         mixins.DestroyModelMixin,
                         viewsets.GenericViewSet):
 
-    """ Circle membership viewset """ 
+    """ Circle membership viewset """
 
     serializer_class = MembershipModelSerializer
     lookup_url_kwarg = "username"
+
     def get_permissions(self):
         permissions = [IsAuthenticated]
 
@@ -55,7 +57,7 @@ class MembershipViewSet(mixins.ListModelMixin,
         return Membership.objects.filter(
             circle=self.circle,
             is_active=True
-        ) 
+        )
 
     def get_object(self):
         return get_object_or_404(
@@ -67,7 +69,7 @@ class MembershipViewSet(mixins.ListModelMixin,
     def perform_destroy(self, instance):
         instance.is_active = False
         instance.save()
-        
+
     @action(detail=True, methods=["GET"])
     def invitations(self, request, *args, **kwargs):
         """Retrive a member's invitations breakdown
@@ -89,10 +91,9 @@ class MembershipViewSet(mixins.ListModelMixin,
             used=False
         ).values_list("code")
 
-        
-        diff = member.remaining_invitations - len(unused_invitations) 
-        
-        invitations = [x[0] for x in unused_invitations] 
+        diff = member.remaining_invitations - len(unused_invitations)
+
+        invitations = [x[0] for x in unused_invitations]
 
         for i in range(0, diff):
             invitations.append(
@@ -102,18 +103,15 @@ class MembershipViewSet(mixins.ListModelMixin,
                 ).code
             )
 
-        
-
         data = {
             "used_invitations": MembershipModelSerializer(invited_members, many=True).data,
-            "invitations": invitations 
+            "invitations": invitations
         }
         return Response(data)
 
-
     def create(self, request, *args, **kwargs):
         serializer = MembershipCreateSerializer(
-            data=request.data, 
+            data=request.data,
             context={
                 "circle": self.circle,
                 "request": request
@@ -125,6 +123,3 @@ class MembershipViewSet(mixins.ListModelMixin,
 
         data = self.get_serializer(member).data
         return Response(data, status=status.HTTP_201_CREATED)
-
-
-

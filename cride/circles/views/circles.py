@@ -17,12 +17,13 @@ from cride.circles.models import Circle, Membership
 # Serializers
 from cride.circles.serializers import CircleModelSerializer
 
+
 class CircleViewSet(
-    mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet):
+        mixins.CreateModelMixin,
+        mixins.RetrieveModelMixin,
+        mixins.UpdateModelMixin,
+        mixins.ListModelMixin,
+        viewsets.GenericViewSet):
 
     """ Circle view set. """
     serializer_class = CircleModelSerializer
@@ -34,8 +35,6 @@ class CircleViewSet(
     ordering_fields = ["name", "rides_taken", "rides_offered"]
     ordering = ["-members__count", "-rides_offered", "-rides_taken"]
     filter_fields = ["verified", "is_limited"]
-
-
 
     def get_queryset(self):
         queryset = Circle.objects.all()
@@ -59,8 +58,6 @@ class CircleViewSet(
             user=user,
             profile=profile,
             circle=circle,
-            is_admin=True, 
+            is_admin=True,
             remaining_invitations=10
         )
-
-    

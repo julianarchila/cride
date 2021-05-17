@@ -6,6 +6,7 @@ from django.db import models
 # Utilities
 from cride.utils.models import CRideModel
 
+
 class Membership(CRideModel):
     """ Memberhip model.
         a memberhips is table that holds the relation between
@@ -25,7 +26,7 @@ class Membership(CRideModel):
     used_invitations = models.PositiveSmallIntegerField(default=0)
     remaining_invitations = models.PositiveSmallIntegerField(default=0)
     invited_by = models.ForeignKey(
-        "users.User", 
+        "users.User",
         null=True,
         on_delete=models.SET_NULL,
         related_name="invited_by"
@@ -36,12 +37,11 @@ class Membership(CRideModel):
     rides_offered = models.PositiveIntegerField(default=0)
 
     is_active = models.BooleanField(
-        "active status", 
-        default=True, 
+        "active status",
+        default=True,
         help_text='only active useres can interact in the circle'
     )
 
     def __str__(self):
         """ Return username and circle. """
         return f"@{self.user.username} at {self.circle.slug_name}"
-

@@ -6,6 +6,7 @@ from rest_framework import serializers
 # Models
 from cride.circles.models import Circle
 
+
 class CircleModelSerializer(serializers.ModelSerializer):
     """ Circle model serializer. """
     members_limit = serializers.IntegerField(
@@ -14,12 +15,13 @@ class CircleModelSerializer(serializers.ModelSerializer):
         max_value=36000
     )
     is_limited = serializers.BooleanField(default=False)
+
     class Meta:
         """ Meta class """
         model = Circle
         fields = (
             "name", "slug_name",
-            "about", "picture", 
+            "about", "picture",
             "rides_offered", "rides_taken",
             "verified", "is_public",
             "is_limited", "members_limit"
@@ -28,14 +30,14 @@ class CircleModelSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "is_public",
             "verified",
-            "rides_offered", 
+            "rides_offered",
             "rides_taken",
         )
 
     def validate(self, data):
         """ Ensure both members_limit and is_limited are present """
         members_limit = data.get("members_limit", None)
-        is_limited = data.get("is_limited",False)
+        is_limited = data.get("is_limited", False)
 
         if is_limited ^ bool(members_limit):
             raise serializers.ValidationError("If circle is limited, a members limite must be provided")

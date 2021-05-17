@@ -42,5 +42,3 @@ class Invitation(CRideModel):
 
     def __str__(self):
         return f"#{self.circle.slug_name} : {self.code}"
-
-

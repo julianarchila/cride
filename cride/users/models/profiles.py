@@ -6,6 +6,7 @@ from django.db import models
 # Utilities
 from cride.utils.models import CRideModel
 
+
 class Profile(CRideModel, models.Model):
     """ 
     Profile model holdds users publica data like biography, picture and staticstics 

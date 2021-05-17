@@ -7,7 +7,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 # Views
-from .views import rides as ride_views 
+from .views import rides as ride_views
 
 router = DefaultRouter()
 

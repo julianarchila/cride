@@ -8,7 +8,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils import timezone
 
- 
+
 # Django rest framework
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
@@ -22,21 +22,23 @@ from cride.users.serializers.profiles import ProfileModelSerializer
 
 # Utilities
 from datetime import timedelta
-import jwt 
+import jwt
 
 
 class UserModelSerializer(serializers.ModelSerializer):
     profile = ProfileModelSerializer(read_only=True)
+
     class Meta:
         model = User
         fields = (
             'username',
             'first_name',
-            'profile', 
+            'profile',
             'last_name',
-            'email', 
+            'email',
             'phone_number'
         )
+
 
 class UserSignUpSerializer(serializers.Serializer):
     """User signup serializers. 
@@ -56,8 +58,7 @@ class UserSignUpSerializer(serializers.Serializer):
         regex=r'\+?1?\d{9,15}$',
         message="Phone number must be in the format : +999999999 up to 15 digits"
     )
-    phone_number = serializers.CharField(validators=[phone_regex],max_length=17)
-
+    phone_number = serializers.CharField(validators=[phone_regex], max_length=17)
 
     # Password
     password = serializers.CharField(min_length=8, max_length=64)
@@ -69,7 +70,7 @@ class UserSignUpSerializer(serializers.Serializer):
 
     def validate(self, data):
 
-        # Verify passwords match. 
+        # Verify passwords match.
         passwd = data["password"]
         passwd_conf = data["password_confirmation"]
         if passwd != passwd_conf:
@@ -78,7 +79,7 @@ class UserSignUpSerializer(serializers.Serializer):
 
         return data
 
-    def create(self,data):
+    def create(self, data):
         data.pop("password_confirmation")
         user = User.objects.create_user(**data, is_verified=False, is_client=True)
         profile = Profile.objects.create(user=user)
@@ -93,12 +94,12 @@ class UserSignUpSerializer(serializers.Serializer):
         from_email = "Comparte Ride <noreply@comparteride.com>"
 
         content = render_to_string(
-            "emails/users/account_verification.html", 
+            "emails/users/account_verification.html",
             {"token": token, "user": user}
         )
 
         msg = EmailMultiAlternatives(subject, content, from_email, [user.email])
-        msg.attach_alternative(content , "text/html")
+        msg.attach_alternative(content, "text/html")
         msg.send()
 
     def gen_verification_token(self, user):
@@ -113,8 +114,6 @@ class UserSignUpSerializer(serializers.Serializer):
         return token
 
 
-    
-
 class UserLoginSerializer(serializers.Serializer):
     """User login serializers. 
     Handle the login request data.
@@ -122,7 +121,7 @@ class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(min_length=8, max_length=64)
 
-    def validate(self,data):
+    def validate(self, data):
         user = authenticate(username=data["email"], password=data["password"])
         if not user:
             raise serializers.ValidationError("Invalid credentials.")
@@ -156,16 +155,11 @@ class AccountVerificationSerializer(serializers.Serializer):
         if payload["type"] != "email_confirmation":
             raise serializers.ValidationError("Invalid token.")
 
-        self.context["payload"] = payload 
+        self.context["payload"] = payload
         return token
 
-        
     def save(self):
         payload = self.context["payload"]
         user = User.objects.get(username=payload["user"])
         user.is_verified = True
         user.save()
-
-
-        
-        

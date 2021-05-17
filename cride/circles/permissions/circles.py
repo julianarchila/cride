@@ -6,6 +6,7 @@ from rest_framework import permissions
 # Models
 from cride.circles.models import Membership
 
+
 class IsCircleAdmin(permissions.BasePermission):
     """Allow access only to circle admins."""
     message = 'Only admins can edit circles.'

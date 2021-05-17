@@ -11,10 +11,12 @@ from cride.circles.models import (
 
 admin.site.register(Membership)
 admin.site.register(Invitation)
+
+
 @admin.register(Circle)
 class CircleAdmin(admin.ModelAdmin):
     list_display = (
-        "name", 
+        "name",
         "slug_name",
         "is_public",
         "verified",

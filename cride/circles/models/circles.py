@@ -6,13 +6,14 @@ from django.db import models
 # Utilities
 from cride.utils.models import CRideModel
 
+
 class Circle(CRideModel):
     """Circle model.
     A circle is a private group where rides are offered and taken
     by its members. To join a circles users must recive a unique
     invitation code from a existing circle member.
     """
-    
+
     name = models.CharField("circle name", max_length=140)
     slug_name = models.CharField(unique=True, max_length=40)
 
@@ -20,9 +21,9 @@ class Circle(CRideModel):
     picture = models.ImageField(upload_to="circles/pictures", blank=True, null=True)
 
     members = models.ManyToManyField(
-        "users.User", 
-        through="circles.Membership", 
-        through_fields=("circle","user")
+        "users.User",
+        through="circles.Membership",
+        through_fields=("circle", "user")
     )
 
     # Stats
@@ -33,15 +34,15 @@ class Circle(CRideModel):
         default=False,
         help_text="Verified circles are also known as official comunities."
     )
-    
+
     is_public = models.BooleanField(
         "public",
         default=True,
         help_text="Public circles are listed in the main page so everyone knows about is existence."
     )
-    
+
     is_limited = models.BooleanField(
-        "limited", 
+        "limited",
         default=False,
         help_text="Limited circles can grow to a fixed number of members."
     )

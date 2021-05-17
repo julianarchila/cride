@@ -12,27 +12,30 @@ from cride.circles.models import Membership, Invitation
 # Other serializers
 from cride.users.serializers.users import UserModelSerializer
 
+
 class MembershipModelSerializer(serializers.ModelSerializer):
     """ Membership model serializer. """
     user = UserModelSerializer(read_only=True)
     invited_by = serializers.StringRelatedField()
     joined_at = serializers.DateTimeField(source="created", read_only=True)
+
     class Meta:
         """ Meta class. """
         model = Membership
         fields = (
             "user", "is_admin", "is_active",
             "used_invitations", "remaining_invitations",
-            "invited_by", 
+            "invited_by",
             "rides_taken", "rides_offered",
             "joined_at"
         )
         read_only_fields = (
-            "user", 
-            "used_invitations", 
-            "invited_by", 
+            "user",
+            "used_invitations",
+            "invited_by",
             "rides_taken", "rides_offered",
         )
+
 
 class MembershipCreateSerializer(serializers.Serializer):
     invitation_code = serializers.CharField(min_length=8, max_length=50)
@@ -44,7 +47,6 @@ class MembershipCreateSerializer(serializers.Serializer):
         if q.exists():
             raise serializers.ValidationError("User is already a circle member")
         return value
-
 
     def validate_invitation_code(self, value):
         try:
@@ -87,7 +89,6 @@ class MembershipCreateSerializer(serializers.Serializer):
         invitation.used_at = timezone.now()
         invitation.save()
 
-
         # Update issuer data
         issuer = Membership.objects.get(
             user=invitation.issued_by,
@@ -97,6 +98,4 @@ class MembershipCreateSerializer(serializers.Serializer):
         issuer.remaining_invitations -= 1
         issuer.save()
 
-        return member 
-
-    
+        return member

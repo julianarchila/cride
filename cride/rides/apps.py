@@ -3,6 +3,7 @@
 # Django
 from django.apps import AppConfig
 
+
 class RidesAppConfig(AppConfig):
     """ Users app configuration """
 
