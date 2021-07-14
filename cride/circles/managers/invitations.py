@@ -1,17 +1,18 @@
 """ Circle invitations manager. """
 
-# Django
-from django.db import models
-
 # Utilities
 import random
 from string import ascii_uppercase, digits
 
+# Django
+from django.db import models
+
 
 class InvitationManager(models.Manager):
-    """Invitation manager. 
+    """Invitation manager.
     Used to handle code generation
     """
+
     CODE_LENGTH = 10
 
     def create(self, **kwargs):
